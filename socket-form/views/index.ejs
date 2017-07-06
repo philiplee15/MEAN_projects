@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+        $(document).ready(function (){
+            // this triggers the connection event in our server!
+            var socket = io.connect();
+            // we'll write all the socket stuff after the above line!
+            $('#msg').submit(function (event){
+                var obj = {};
+                obj['name'] = $('input[name="name"]').val();
+                obj['location'] = $('#msg select[name="location"]').val();
+                obj['lang'] = $('#msg select[name="lang"]').val();
+                obj['comment'] = $('#msg textarea[name="comment"]').val();
+                socket.emit("submitted", obj);
+                return false;
+            });
+            socket.on('update_chat', function (data){
+                $("#chats").append("\
+                <div class='achat'>\
+                  <h3>Name: "+data.name+" </h3>\
+                  <p>Location: "+data.location+" </p>\
+                  <p>Language: "+data.lang+" </p>\
+                  <p>Comment: "+data.comment+"</p>\
+                ");
+                $("#name, textarea[name='comment']").val("");
+            });
+        })
+    </script>
+  </head>
+  <body>
+    <h1>Form Chat</h1>
+    <div id="form-chat" style="width: 80%;">
+      <div id = "form" style="float:left;">
+        <form id="msg">
+          <p><span>Name: </span><input id="name" type="text" name="name"></p>
+          <p>
+            <span>Location: </span>
+            <select name="location">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </p>
+          <p>
+            <span>Language: </span>
+            <select name="lang">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </p>
+          <p>
+            <p>Comment (Optional):</p>
+            <textarea name="comment" rows="5" cols="25"></textarea>
+          </p>
+          <input type="submit" value="Submit">
+        </form>
+      </div>
+      <div id="chats" style="width:50%; min-height: 300px; display:inline-block; margin-left: 15%; border: 1px solid black;">
+
+      </div>
+    </div>
+</body>
+</html>
+  </body>
+</html>
